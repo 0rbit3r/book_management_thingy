@@ -6,11 +6,11 @@ public class BookDto
 {
     public Guid Id { get; set; }
     [Required]
-    public required string Name { get; set; } 
+    public required string Title { get; set; } 
     [Required]
     public required string Author { get; set; }
     [Required]
-    public DateTime PublishDate { get; set; }
+    public DateOnly PublishDate { get; set; }
     [Required]
     public required string Isbn { get; set; }
     public int AvailableCopies { get; set; }

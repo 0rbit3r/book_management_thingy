@@ -3,7 +3,7 @@ using BMT.Contract.Dtos.Results;
 
 namespace BMT.Contract.Logic;
 
-public interface IBookManagementLogic
+public interface IBookLogic
 {
     /// <summary>
     /// Gets all the books without paging, filtering or other fancy stuff
@@ -15,7 +15,7 @@ public interface IBookManagementLogic
     /// <param name="newBook">New book with required fields: 
     ///     Title, Author, ISBN and publish Date</param>
     /// <returns>Result with guid of the created book (if successful)</returns>
-    Task<ResultDto<Guid>> CreateBook(BookDto newBook);
+    Task<ResultDto<Guid>> CreateBook(BookDto newBook, int availableCopies);
 
     /// <summary>
     /// Will return books with author whose name contains the given substring
@@ -36,7 +36,7 @@ public interface IBookManagementLogic
     /// </summary>
     /// <param name="ISBM">Valid ISBM string</param>
     /// <returns>Either a book matching the given ISBM or NotFound Error if no such one is found</returns>
-    Task<ResultDto<BookDto>> GetBooksByICBM(string ISBM);
+    Task<ResultDto<BookDto>> GetBookByICBM(string ISBM);
 
     /// <summary>
     /// Lends given book - practically this only decrements number of available copies and stores a row about the borrowing
@@ -49,7 +49,7 @@ public interface IBookManagementLogic
     /// Lends given book - practically this only inccrements number of available copies and stores a row about the return
     /// </summary>
     /// <param name="id">Id of the book being returned</param>
-    Task<ResultDto> ReturnsBook(Guid id);
+    Task<ResultDto> ReturnBook(Guid id);
 
     /// <summary>
     /// This will return the entire history of book transactions
