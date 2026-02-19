@@ -24,8 +24,8 @@ Commands:
     get <isbn>                                          Get a book specified by its ISBN
 
     add <title> <author> <isbn> <published> <copies>    Add a new book to the system
-        isbn takes format of 'ddd-d-ddddd-ddd-d' or 'd-ddddd-ddd-d'
-        published takes format of 'yyyy-MM-dd'
+                                                        - <isbn> takes format of 'ddd-d-ddddd-ddd-d' or 'd-ddddd-ddd-d'
+                                                        - <published> takes format of 'yyyy-MM-dd'
 
     lend <isbn>                                         Lend a book
 
