@@ -136,7 +136,7 @@ public class BookLogicExtendedTests : IDisposable
         var result = await _sut.LendBook(IsbnUnused);
 
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorCode.BadRequest, result.Error!.Code);
+        Assert.Equal(ErrorCode.NotFound, result.Error!.Code);
     }
 
     [Theory]
@@ -197,7 +197,7 @@ public class BookLogicExtendedTests : IDisposable
         var result = await _sut.ReturnBook(IsbnUnused);
 
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorCode.BadRequest, result.Error!.Code);
+        Assert.Equal(ErrorCode.NotFound, result.Error!.Code);
     }
 
     [Theory]

@@ -109,7 +109,7 @@ public class BookLogic(
             .FirstOrDefaultAsync();
 
             if (book is null)
-                return ErrorDto.NotFound();
+                return ErrorDto.NotFound("Book not found");
             return book;
         }
         catch (Exception e)
@@ -157,7 +157,7 @@ public class BookLogic(
                 return validationResult.Error!;
             var book = await _db.Books.FirstOrDefaultAsync(b => b.Isbn == isbn);
             if (book is null)
-                return ErrorDto.BadRequest("Book not found");
+                return ErrorDto.NotFound("Book not found");
             if (book.AvailableCopies <= 0)
                 return ErrorDto.BadRequest("Book has no available copies");
 
@@ -194,7 +194,7 @@ public class BookLogic(
                 return validationResult.Error!;
             var book = await _db.Books.FirstOrDefaultAsync(b => b.Isbn == isbn);
             if (book is null)
-                return ErrorDto.BadRequest("Book not found");
+                return ErrorDto.NotFound("Book not found");
             if (book.AvailableCopies >= book.TotalCopies)
                 return ErrorDto.BadRequest("Cannot return book - all copies are already returned");
 
