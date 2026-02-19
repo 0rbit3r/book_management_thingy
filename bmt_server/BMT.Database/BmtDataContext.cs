@@ -5,6 +5,9 @@ namespace BMT.Database;
 
 public class BmtDataContext : DbContext
 {
+    public BmtDataContext(DbContextOptions<BmtDataContext> options)
+    : base(options) { }
+    
     public DbSet<BookEntity> Books { get; set; }
     public DbSet<AuthorEntity> Authors { get; set; }
     public DbSet<BookTransactionEntity> Transactions { get; set; }

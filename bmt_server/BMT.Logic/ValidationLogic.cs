@@ -30,14 +30,14 @@ public class ValidationLogic : IValidationLogic
         // potentially not entirely correct, but for our purposes it will do
         var match = Regex.IsMatch(isbn, @"^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$");
         if (!match)
-            return ErrorDto.BadRequest("The provided isbn is not valid");
+            return ErrorDto.BadRequest("The provided ISBN is not valid");
         return ResultDto.Success();
     }
 
     // This should methid limit author names to reasonable values
     public ResultDto ValidateFullName(string fullName)
     {
-        var match = Regex.IsMatch(fullName, @"^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$");
+        var match = Regex.IsMatch(fullName, @"[a-z,A-Z,á,é,í,ó,ú,â,ê,ô,ã,õ,ç,Á,É,Í,Ó,Ú,Â,Ê,Ô,Ã,Õ,Ç,ü,ñ,Ü,Ñ,' ']+");
         if (!match)
             return ErrorDto.BadRequest("The full name seems to be malformed. Remove any special characters and use up to three words.");
         return ResultDto.Success();

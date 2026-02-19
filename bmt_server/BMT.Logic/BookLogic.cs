@@ -15,10 +15,12 @@ public class BookLogic(
     BmtDataContext _db
 ) : IBookLogic
 {
-    public async Task<ResultDto<Guid>> CreateBook(BookDto newBook, int availableCopies)
+    public async Task<ResultDto<Guid>> CreateBook(BookDto newBook)
     {
         try
         {
+            if (newBook.AvailableCopies <= 0)
+                return ErrorDto.BadRequest("Available copies must be at least 1");
             var validationResult = _validation.ValidateNewBook(newBook);
             if (!validationResult.IsSuccess)
                 return validationResult.Error!;
@@ -28,6 +30,9 @@ public class BookLogic(
             // In a real world scenario, it would make sense to fix the length of the ISBN to 13 characters with potentially leading zeros
             // and do some research into ISBN formats, validation and uniqueness.
             // Therefore, this logic might be a little bit off, but for our purposes it will do...
+
+            // Another possible way might be to actually count the current number of available copies from the Total copies and history of lends/returns.
+            // That would be foolproof but potentially slow for large data.
             var checkExisting = await _db.Books.FirstOrDefaultAsync(b => b.Isbn == newBook.Isbn);
             if (checkExisting is not null)
                 return ErrorDto.BadRequest("The provided ISBN is already in our database");
@@ -51,7 +56,8 @@ public class BookLogic(
                 Title = newBook.Title,
                 AuthorId = existingAuthor.Id,
                 Isbn = newBook.Isbn,
-                AvailableCopies = newBook.AvailableCopies
+                AvailableCopies = newBook.AvailableCopies,
+                TotalCopies = newBook.AvailableCopies
             });
 
             await _db.SaveChangesAsync();
@@ -80,7 +86,7 @@ public class BookLogic(
         try
         {
             return await _db.Books
-            .Where(b => b.Author.FullName.Contains(authorSubstring))
+            .Where(b => b.Author.FullName.ToLower().Contains(authorSubstring.ToLower()))//NOTE: It seems that SQLite doesn't support InvariantCulture comparision. Pitty...
             .Select(BookMapper.ToDtoExpr)
             .ToListAsync();
         }
@@ -114,7 +120,7 @@ public class BookLogic(
         try
         {
             return await _db.Books
-            .Where(b => b.Title.Contains(titleSubstring))
+            .Where(b => b.Title.ToLower().Contains(titleSubstring.ToLower())) //NOTE: It seems that SQLite doesn't support InvariantCulture comparision. Pitty...
             .Select(BookMapper.ToDtoExpr)
             .ToListAsync();
         }
@@ -128,7 +134,10 @@ public class BookLogic(
     {
         try
         {
-            return await _db.Transactions.Select(BookTransactionMapper.ToDtoExpr).ToListAsync();
+            return await _db.Transactions
+            .Select(BookTransactionMapper.ToDtoExpr)
+            .OrderByDescending(t => t.DateTime)
+            .ToListAsync();
         }
         catch (Exception e)
         {
@@ -136,11 +145,14 @@ public class BookLogic(
         }
     }
 
-    public async Task<ResultDto> LendBook(Guid id)
+    public async Task<ResultDto<int>> LendBook(string isbn)
     {
         try
         {
-            var book = await _db.Books.FirstOrDefaultAsync(b => b.Id == id);
+            var validationResult = _validation.ValidateISBN(isbn);
+            if (!validationResult.IsSuccess)
+                return validationResult.Error!;
+            var book = await _db.Books.FirstOrDefaultAsync(b => b.Isbn == isbn);
             if (book is null)
                 return ErrorDto.BadRequest("Book not found");
             if (book.AvailableCopies <= 0)
@@ -152,9 +164,17 @@ public class BookLogic(
             // Here I chose not to do that as for our purposes (simple CLI) it is not critical. (And I need to sleep sometimes too)
             book.AvailableCopies--;
 
+            _db.Transactions.Add(new()
+            {
+                BookId = book.Id,
+                DateTime = DateTime.Now,
+                IsReturn = false,
+                Id = Guid.NewGuid()
+            });
+
             await _db.SaveChangesAsync();
 
-            return ResultDto.Success();
+            return book.AvailableCopies;
         }
         catch (Exception e)
         {
@@ -162,20 +182,33 @@ public class BookLogic(
         }
     }
 
-    public async Task<ResultDto> ReturnBook(Guid id)
+    public async Task<ResultDto<int>> ReturnBook(string isbn)
     {
         try
         {
-            var book = await _db.Books.FirstOrDefaultAsync(b => b.Id == id);
+            var validationResult = _validation.ValidateISBN(isbn);
+            if (!validationResult.IsSuccess)
+                return validationResult.Error!;
+            var book = await _db.Books.FirstOrDefaultAsync(b => b.Isbn == isbn);
             if (book is null)
                 return ErrorDto.BadRequest("Book not found");
+            if (book.AvailableCopies >= book.TotalCopies)
+                return ErrorDto.BadRequest("Cannot return book - all copies are already returned");
 
-            // NOTE: Ad Lendbook note
+            // NOTE: Ad LendBook note above
             book.AvailableCopies++;
+
+            _db.Transactions.Add(new()
+            {
+                BookId = book.Id,
+                DateTime = DateTime.Now,
+                IsReturn = true,
+                Id = Guid.NewGuid()
+            });
 
             await _db.SaveChangesAsync();
 
-            return ResultDto.Success();
+            return book.AvailableCopies;
         }
         catch (Exception e)
         {
@@ -185,6 +218,6 @@ public class BookLogic(
 
     public Task<ResultDto<string>> GetSecurity()
     {
-        return Task.FromResult(ResultDto.Success("The application is secured I promise"));
+        return Task.FromResult(ResultDto.Success("The application is secured. I promise"));
     }
 }

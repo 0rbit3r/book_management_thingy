@@ -10,7 +10,6 @@ public static class BookMapper
     public static Expression<Func<BookEntity, BookDto>> ToDtoExpr = (BookEntity entity) =>
         new BookDto
         {
-            Id = entity.Id,
             Title = entity.Title,
             Author = entity.Author.FullName,
             Isbn = entity.Isbn,

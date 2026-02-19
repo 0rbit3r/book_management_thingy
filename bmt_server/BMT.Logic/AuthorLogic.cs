@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BMT.Logic;
 
 public class AuthorLogic(
-    ValidationLogic _validation,
+    IValidationLogic _validation,
     BmtDataContext _db
 ) : IAuthorLogic
 {
@@ -30,6 +30,7 @@ public class AuthorLogic(
                 Id = newGuid,
                 FullName = normalizedName
             });
+            await _db.SaveChangesAsync();
             return ResultDto.Success(newGuid);
         }
         catch (Exception e)

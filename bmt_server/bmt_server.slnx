@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="BMT.CLI/BMT.CLI.csproj" />
   <Project Path="BMT.Contract/BMT.Contract.csproj" />
   <Project Path="BMT.Database/BMT.Database.csproj" />
   <Project Path="BMT.Logic/BMT.Logic.csproj" />

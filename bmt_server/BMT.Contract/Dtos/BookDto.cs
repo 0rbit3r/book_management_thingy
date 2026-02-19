@@ -4,8 +4,7 @@ namespace BMT.Contract.Dtos;
 
 public class BookDto
 {
-    public Guid Id { get; set; }
-    [Required]
+   [Required]
     public required string Title { get; set; } 
     [Required]
     public required string Author { get; set; }

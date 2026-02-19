@@ -8,6 +8,7 @@ public class BookEntity
     public Guid Id { get; set; }
     public string Title { get; set; } = null!;
     public string Isbn { get; set; } = null!;
+    public int TotalCopies { get; set; }
     public int AvailableCopies { get; set; }
     public Guid AuthorId { get; set; }
     public DateOnly PublishDate { get; set; }

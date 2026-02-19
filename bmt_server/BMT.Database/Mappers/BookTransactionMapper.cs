@@ -11,7 +11,7 @@ public static class BookTransactionMapper
         new BookTransactionDto
         {
             IsReturn = entity.IsReturn,
-            BookIdentification = entity.Book.Title + " by " + entity.Book.Author.FullName,
+            BookIdentification = entity.Book.Title + " (by " + entity.Book.Author.FullName +")",
             DateTime = entity.DateTime
         };
 

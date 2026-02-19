@@ -15,7 +15,7 @@ public interface IBookLogic
     /// <param name="newBook">New book with required fields: 
     ///     Title, Author, ISBN and publish Date</param>
     /// <returns>Result with guid of the created book (if successful)</returns>
-    Task<ResultDto<Guid>> CreateBook(BookDto newBook, int availableCopies);
+    Task<ResultDto<Guid>> CreateBook(BookDto newBook);
 
     /// <summary>
     /// Will return books with author whose name contains the given substring
@@ -43,13 +43,13 @@ public interface IBookLogic
     /// </summary>
     /// <param name="id">Id of the lent book</param>
     /// <param name="borrowerName">Optional name of the person borrowing - is stored in history</param>
-    /// <returns>Result of the operation</returns>
-    Task<ResultDto> LendBook(Guid id);
+    /// <returns>Number of copies remaining or error</returns>
+    Task<ResultDto<int>> LendBook(string isbn);
     /// <summary>
     /// Lends given book - practically this only inccrements number of available copies and stores a row about the return
     /// </summary>
-    /// <param name="id">Id of the book being returned</param>
-    Task<ResultDto> ReturnBook(Guid id);
+    /// <param name="id">Number of copies remaining or error</param>
+    Task<ResultDto<int>> ReturnBook(string isbn);
 
     /// <summary>
     /// This will return the entire history of book transactions

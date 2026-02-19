@@ -6,7 +6,9 @@ namespace BMT.Contract.Logic;
 
 public interface IValidationLogic
 {
-    public ResultDto ValidateNewBook(BookDto book);
+    ResultDto ValidateNewBook(BookDto book);
 
-    public ResultDto ValidateISBN(string isbn);
+    ResultDto ValidateISBN(string isbn);
+
+    ResultDto ValidateFullName(string fullName);
 }
