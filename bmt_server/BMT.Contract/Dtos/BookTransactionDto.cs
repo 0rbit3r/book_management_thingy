@@ -1,4 +1,4 @@
-using BMT.Contract.Enums;
+using BMT.Contract.Dtos.Results;
 
 namespace BMT.Contract.Dtos;
 

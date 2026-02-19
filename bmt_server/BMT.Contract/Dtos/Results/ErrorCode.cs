@@ -1,4 +1,4 @@
-namespace BMT.Contract.Enums;
+namespace BMT.Contract.Dtos.Results;
 
 public enum ErrorCode
 {

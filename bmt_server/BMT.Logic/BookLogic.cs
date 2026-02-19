@@ -38,7 +38,7 @@ public class BookLogic(
                 return ErrorDto.BadRequest("The provided ISBN is already in our database");
 
             var normalizedAuthor = Utility.NormalizeFullName(newBook.Author);
-            var existingAuthor = await _db.Authors.FirstOrDefaultAsync(b => b.FullName == newBook.Author);
+            var existingAuthor = await _db.Authors.FirstOrDefaultAsync(b => b.FullName == normalizedAuthor);
 
             if (existingAuthor is null)
             {
@@ -96,10 +96,13 @@ public class BookLogic(
         }
     }
 
-    public async Task<ResultDto<BookDto>> GetBookByICBM(string isbn)
+    public async Task<ResultDto<BookDto>> GetBookByISBN(string isbn)
     {
         try
         {
+            var validationResult = _validation.ValidateISBN(isbn);
+            if (!validationResult.IsSuccess)
+                return validationResult.Error!;
             var book = await _db.Books
             .Where(b => b.Isbn == isbn)
             .Select(BookMapper.ToDtoExpr)

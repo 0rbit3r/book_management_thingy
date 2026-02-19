@@ -36,7 +36,7 @@ public interface IBookLogic
     /// </summary>
     /// <param name="ISBM">Valid ISBM string</param>
     /// <returns>Either a book matching the given ISBM or NotFound Error if no such one is found</returns>
-    Task<ResultDto<BookDto>> GetBookByICBM(string ISBM);
+    Task<ResultDto<BookDto>> GetBookByISBN(string ISBM);
 
     /// <summary>
     /// Lends given book - practically this only decrements number of available copies and stores a row about the borrowing

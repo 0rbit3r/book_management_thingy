@@ -4,6 +4,7 @@ using BMT.Contract.Logic;
 using BMT.Database;
 using BMT.Logic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -31,15 +32,19 @@ Commands:
 
     return <isbn>                                       Return a book
 
-    history                                             Print history of transactions";
+    history                                             Print history of transactions
+";
 
 HostApplicationBuilder builder = new HostApplicationBuilder();
+IConfiguration config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", false)
+    .Build();
 
 // Add modules
 builder.Services.RegisterLogicModule();
 
 builder.Services.AddDbContext<BmtDataContext>(options =>
-    options.UseSqlite("Data Source=bmt_db")); // With IConfiguration we could use whatever path, but I decided not to to keep it simple
+    options.UseSqlite(config.GetConnectionString("DefaultConnection"))); // With IConfiguration we could use whatever path, but I decided not to to keep it simple
 
 var app = builder.Build();
 
@@ -89,7 +94,7 @@ switch (args[0])
     case "get":
         if (args.Length != 2)
             return PrintHelpAndExitWithOne();
-        var getByIsbnResult = await app.Services.GetRequiredService<IBookLogic>().GetBookByICBM(args[1]);
+        var getByIsbnResult = await app.Services.GetRequiredService<IBookLogic>().GetBookByISBN(args[1]);
         if (!getByIsbnResult.IsSuccess) { Console.WriteLine(getByIsbnResult.Error!.Message); return 1; }
         PrintBook(getByIsbnResult.Payload!);
         break;
@@ -123,7 +128,7 @@ return 0;
 
 void PrintBook(BookDto book)
 {
-    Console.WriteLine($"{book.Title,-35}{$"by {book.Author}",-25}ISBN: {book.Isbn,-25} Copies: {book.AvailableCopies}");
+    Console.WriteLine($"{book.Title,-50}{$" by {book.Author}",-30}ISBN: {book.Isbn,-18} Copies: {book.AvailableCopies}");
 }
 
 void PrintTransaction(BookTransactionDto transaction)
