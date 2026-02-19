@@ -1,0 +1,92 @@
+@baseUrl = http://localhost:5011
+
+### Create book (valid)
+POST {{baseUrl}}/books
+Content-Type: application/json
+
+{
+  "title": "The Pragmatic Programmer",
+  "author": "David Thomas",
+  "isbn": "978-0-13595-705-9",
+  "availableCopies": 3,
+  "publishDate": "1999-10-30"
+}
+
+###
+
+### Get all books
+GET {{baseUrl}}/books
+
+###
+
+### Get book by ISBN (existing)
+GET {{baseUrl}}/books/isbn/978-0-13208-906-8
+
+###
+
+### Get book by ISBN (not found)
+GET {{baseUrl}}/books/isbn/000-0-00000-000-0
+
+###
+
+### Get book by ISBN (invalid format)
+GET {{baseUrl}}/books/isbn/not-an-isbn
+
+###
+
+### Get books by author
+GET {{baseUrl}}/books/author/david
+
+###
+
+### Get books by title
+GET {{baseUrl}}/books/title/program
+
+###
+
+### Get transaction history
+GET {{baseUrl}}/books/transactions
+
+###
+
+### Create book (duplicate ISBN)
+POST {{baseUrl}}/books
+Content-Type: application/json
+
+{
+  "title": "Duplicate",
+  "author": "Some Author",
+  "isbn": "978-0-13208-906-8",
+  "availableCopies": 1,
+  "publishDate": "2020-01-01"
+}
+
+###
+
+### Create book (zero copies)
+POST {{baseUrl}}/books
+Content-Type: application/json
+
+{
+  "title": "Ghost Book",
+  "author": "Some Author",
+  "isbn": "178-0-13208-906-8",
+  "availableCopies": 0,
+  "publishDate": "2020-01-01"
+}
+
+###
+
+### Lend book
+POST {{baseUrl}}/books/isbn/978-0-13208-906-8/lend
+
+###
+
+### Return book
+POST {{baseUrl}}/books/isbn/978-0-13208-906-8/return
+
+###
+
+
+### Security (very important)
+GET {{baseUrl}}/security

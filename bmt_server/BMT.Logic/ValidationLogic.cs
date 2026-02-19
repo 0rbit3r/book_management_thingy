@@ -17,7 +17,7 @@ public class ValidationLogic : IValidationLogic
         if (!icbnValidationResult.IsSuccess)
             validationErrors.AppendLine(icbnValidationResult.Error!.Message);
         if (book.PublishDate == DateOnly.MinValue)
-            validationErrors.AppendLine("DateTime was not provided");
+            validationErrors.AppendLine("PublishedDate was not provided");
 
         return validationErrors.Length == 0
             ? ResultDto.Success()

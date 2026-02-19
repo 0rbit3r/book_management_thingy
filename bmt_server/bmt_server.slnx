@@ -4,4 +4,5 @@
   <Project Path="BMT.Database/BMT.Database.csproj" />
   <Project Path="BMT.Logic/BMT.Logic.csproj" />
   <Project Path="BMT.Tests/BMT.Tests.csproj" />
+  <Project Path="BMT.WebApi/BMT.WebApi.csproj" />
 </Solution>
